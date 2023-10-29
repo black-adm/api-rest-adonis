@@ -7,15 +7,18 @@ export default class UsersController {
     return users;
   }
 
-  public async store({ request }: HttpContextContract) {
+  public async store({ request, response }: HttpContextContract) {
     const data = request.only(["name", "email", "password"]);
+    const userExists = await User.findBy("email", data.email);
+
+    if (userExists) {
+      return response.status(409).send("Esse email já está cadastrado!");
+    }
 
     const user = new User();
-    //user.id = randomUUID();
     user.fill(data);
 
     await user.save();
-    console.log(user.$isPersisted);
     return user;
   }
 

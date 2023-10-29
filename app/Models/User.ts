@@ -4,7 +4,7 @@ import { randomUUID } from "node:crypto";
 import Hash from "@ioc:Adonis/Core/Hash";
 
 export default class User extends BaseModel {
-  @column({ isPrimary: true, size: 36 })
+  @column({ isPrimary: true })
   public id: string;
 
   @beforeSave()

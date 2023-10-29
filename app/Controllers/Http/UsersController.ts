@@ -17,21 +17,31 @@ export default class UsersController {
 
     const user = new User();
     user.fill(data);
-
     await user.save();
+
+    return response.status(201).send(user);
+  }
+
+  public async show({ request }: HttpContextContract) {
+    const userId = request.param("id");
+    const user = await User.findOrFail(userId);
     return user;
   }
 
-  public async show({}: HttpContextContract) {}
+  public async update({ request }: HttpContextContract) {
+    const userId = request.param("id");
+    const body = request.only(["name", "email"]);
+    const user = await User.findOrFail(userId);
 
-  public async update({}: HttpContextContract) {}
+    await User.query().where("id", userId).update(body);
+    return user;
+  }
 
   public async destroy({ request }: HttpContextContract) {
-    const data = request.param("id");
+    const userId = request.param("id");
+    const user = await User.findOrFail(userId);
 
-    const user = await User.findOrFail(data);
     await user.delete();
-
     return user;
   }
 }

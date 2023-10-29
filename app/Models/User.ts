@@ -1,9 +1,16 @@
 import { DateTime } from "luxon";
-import { BaseModel, column } from "@ioc:Adonis/Lucid/Orm";
+import { BaseModel, beforeSave, column } from "@ioc:Adonis/Lucid/Orm";
+import { randomUUID } from "node:crypto";
+import Hash from "@ioc:Adonis/Core/Hash";
 
 export default class User extends BaseModel {
-  @column({ isPrimary: true })
+  @column({ isPrimary: true, size: 36 })
   public id: string;
+
+  @beforeSave()
+  public static async generateRandomUUID(user: User) {
+    user.id = randomUUID();
+  }
 
   @column()
   public name: string;
@@ -13,6 +20,13 @@ export default class User extends BaseModel {
 
   @column({ serializeAs: null })
   public password: string;
+
+  @beforeSave()
+  public static async hashPassword(user: User) {
+    if (user.$dirty.password) {
+      user.password = await Hash.make(user.password);
+    }
+  }
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime;

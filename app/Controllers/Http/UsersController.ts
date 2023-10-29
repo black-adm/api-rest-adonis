@@ -1,6 +1,5 @@
 import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 import User from "App/Models/User";
-import { randomUUID } from "crypto";
 
 export default class UsersController {
   public async index({}: HttpContextContract) {
@@ -12,7 +11,7 @@ export default class UsersController {
     const data = request.only(["name", "email", "password"]);
 
     const user = new User();
-    user.id = randomUUID();
+    //user.id = randomUUID();
     user.fill(data);
 
     await user.save();
